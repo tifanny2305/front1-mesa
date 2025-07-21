@@ -1,0 +1,53 @@
+<nav class="w-full bg-white border-b border-gray-200 shadow-sm">
+  <div class="max-w-screen-xl mx-auto px-4 py-3 flex justify-between items-center">
+
+    <!-- Botón salir -->
+    <div class="flex items-center space-x-4">
+      <button (click)="leaveRoom()"
+        class="flex items-center justify-center text-white bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 transition"
+        title="Salir de la sala">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path d="M14 19V5h4a1 1 0 0 1 1 1v11h1a1 1 0 0 1 0 2h-6Z" />
+          <path fill-rule="evenodd"
+            d="M12 4.571a1 1 0 0 0-1.275-.961l-5 1.428A1 1 0 0 0 5 6v11H4a1 1 0 0 0 0 2h1.86l4.865 1.39A1 1 0 0 0 12 19.43V4.57ZM10 11a1 1 0 0 1 1 1v.5a1 1 0 0 1-2 0V12a1 1 0 0 1 1-1Z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <span *ngIf="roomCode" class="text-gray-700 text-sm font-medium">
+        Código de sala: <span class="font-bold">{{ roomCode }}</span>
+      </span>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex items-center space-x-3">
+
+      <!-- Descargar ZIP -->
+      <button (click)="downloadAngularProject()"
+        class="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition" title="Descargar proyecto .zip">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 15v2a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-2m-8 1V4m0 12-4-4m4 4 4-4" />
+        </svg>
+      </button>
+
+      <!-- Escanear pantalla (Placeholder) -->
+      <button class="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition" title="Escanear interfaz">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path fill-rule="evenodd"
+            d="M7.5 4.586A2 2 0 0 1 8.914 4h6.172a2 2 0 0 1 1.414.586L17.914 6H19a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1.086L7.5 4.586ZM10 12a2 2 0 1 1 4 0 2 2 0 0 1-4 0Zm2-4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+
+      <!-- Importar archivo (Placeholder) -->
+      <button class="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded-lg transition" title="Importar proyecto">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path fill-rule="evenodd"
+            d="M9 7V2.221a2 2 0 0 0-.5.365L4.586 6.5a2 2 0 0 0-.365.5H9Zm2 0V2h7a2 2 0 0 1 2 2v9.293l-2-2a1 1 0 0 0-1.414 1.414l.293.293h-6.586a1 1 0 1 0 0 2h6.586l-.293.293A1 1 0 0 0 18 16.707l2-2V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9h5a2 2 0 0 0 2-2Z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
