@@ -11,7 +11,7 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class ApiService {
-  apiUrl: string = 'http://localhost:3000/api'; //api poner la pai base
+  apiUrl: string = 'https://back1-mesa.onrender.com/api'; //api poner la pai base
   tokenKey = 'authToken';
 
   constructor(private http: HttpClient, private router: Router) {}
