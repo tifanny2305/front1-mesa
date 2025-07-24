@@ -21,7 +21,7 @@ export interface CanvasComponent {
     boxShadow?: string;
     transition?: string;
     display?: string;
-    
+    inputType?: string;
     // Propiedades faltantes
     padding?: string;
     margin?: string;
@@ -47,9 +47,12 @@ export interface CanvasComponent {
     zIndex?: string;
     redirectValue?: string; // Para redirecciones
     redirectType?: string; // 'link' | 'route'
+    gap?: string;
+    
   };
   children?: CanvasComponent[];
   parentId?: string | null;
+  isGlobal?: boolean;
   content?: string; // contenido textual para tags como label
   checked?: boolean; // Para inputs tipo checkbox
 }

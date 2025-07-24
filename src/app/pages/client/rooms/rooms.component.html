@@ -1,17 +1,32 @@
 <div class="flex h-screen w-full bg-slate-50">
-  <!-- Panel izquierdo: SidebarIzq -->
-  <app-sidebar-izq *ngIf="!isPreviewMode" class="w-80 bg-white border-r border-slate-200 shadow-sm"
-    [components]="getCurrentPage()?.components || []" [roomCode]="roomCode" [contextMenu]="contextMenu"
-    [isModalOpen]="isModalOpen" [pages]="pages" [selectedPageId]="selectedPageId" (selectPage)="selectPage($event)"
-    (addPage)="addPage()" (togglePreview)="togglePreviewMode()" [isPreview]="isPreviewMode">
-  </app-sidebar-izq>
+  <!-- Panel izquierdo: componentes -->
+  <app-componentes
+    *ngIf="!isPreviewMode"
+    class="w-80 bg-white border-r border-slate-200 shadow-sm"
+    [components]="getCurrentPage()?.components || []"
+    [roomCode]="roomCode"
+    [contextMenu]="contextMenu"
+    [isModalOpen]="isModalOpen"
+    [pages]="pages"
+    [selectedPageId]="selectedPageId"
+    (selectPage)="selectPage($event)"
+    (addPage)="addPage()"
+    (togglePreview)="togglePreviewMode()"
+    [isPreview]="isPreviewMode"
+  >
+  </app-componentes>
 
   <!-- Panel central: Canvas -->
-  <div [class.flex-1]="!isPreviewMode" [class.w-full]="isPreviewMode"
-    class="flex flex-col flex-1 border-none overflow-auto relative bg-gray-100">
+  <div
+    [class.flex-1]="!isPreviewMode"
+    [class.w-full]="isPreviewMode"
+    class="flex flex-col flex-1 border-none overflow-auto relative bg-gray-100"
+  >
     <!-- Barra de herramientas superior del canvas -->
-    <div *ngIf="!isPreviewMode"
-      class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm">
+    <div
+      *ngIf="!isPreviewMode"
+      class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-sm"
+    >
       <!-- Info del canvas -->
       <div class="flex items-center gap-6">
         <div class="flex items-center gap-3">
@@ -22,7 +37,7 @@
           </div>
           <span class="text-sm font-medium text-slate-700">{{
             getCurrentPage()?.name || "Página sin título"
-            }}</span>
+          }}</span>
         </div>
         <div class="h-4 w-px bg-slate-300"></div>
         <div class="flex items-center gap-2">
@@ -34,40 +49,90 @@
       <!-- Controles de zoom y herramientas -->
       <div class="flex items-center gap-4">
         <!-- Indicador de zoom -->
-        <div class="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1.5">
-          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        <div
+          class="flex items-center gap-2 bg-slate-100 rounded-lg px-3 py-1.5"
+        >
+          <svg
+            class="w-4 h-4 text-slate-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
-          <span class="text-sm font-medium text-slate-700">{{ zoomLevel * 100 | number : "1.0-0" }}%</span>
+          <span class="text-sm font-medium text-slate-700"
+            >{{ zoomLevel * 100 | number : "1.0-0" }}%</span
+          >
         </div>
 
         <!-- Controles de zoom -->
         <div class="flex items-center bg-slate-100 rounded-lg p-1">
-          <button (click)="zoomLevel = Math.max(zoomLevel - 0.1, minZoom)"
-            class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-md transition-colors">
-            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+          <button
+            (click)="zoomLevel = Math.max(zoomLevel - 0.1, minZoom)"
+            class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-md transition-colors"
+          >
+            <svg
+              class="w-4 h-4 text-slate-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 12H4"
+              />
             </svg>
           </button>
-          <button (click)="resetZoom()"
-            class="px-3 py-1 text-xs font-medium text-slate-600 hover:bg-white rounded-md transition-colors">
+          <button
+            (click)="resetZoom()"
+            class="px-3 py-1 text-xs font-medium text-slate-600 hover:bg-white rounded-md transition-colors"
+          >
             Reset
           </button>
-          <button (click)="zoomLevel = Math.min(zoomLevel + 0.1, maxZoom)"
-            class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-md transition-colors">
-            <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          <button
+            (click)="zoomLevel = Math.min(zoomLevel + 0.1, maxZoom)"
+            class="w-8 h-8 flex items-center justify-center hover:bg-white rounded-md transition-colors"
+          >
+            <svg
+              class="w-4 h-4 text-slate-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
           </button>
         </div>
 
         <!-- Botón preview -->
-        <button (click)="togglePreviewMode()"
-          class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <button
+          (click)="togglePreviewMode()"
+          class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
           </svg>
           <span class="text-sm font-medium">Preview</span>
         </button>
@@ -75,29 +140,58 @@
     </div>
 
     <!-- Área de trabajo principal -->
-    <div #canvas [ngClass]="{
+    <div
+      #canvas
+      [ngClass]="{
         'preview-bg border-none': isPreviewMode,
         'work-bg border border-gray-300': !isPreviewMode
-      }" class="flex-1 relative overflow-auto py-8 transition-all duration-300"
-      (contextmenu)="onCanvasContextMenu($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp($event)"
-      (wheel)="onWheel($event)">
+      }"
+      class="flex-1 relative overflow-auto py-8 transition-all duration-300"
+      (contextmenu)="onCanvasContextMenu($event)"
+      (mousemove)="onMouseMove($event)"
+      (mouseup)="onMouseUp($event)"
+      (wheel)="onWheel($event)"
+    >
       <!-- Canvas workspace -->
-      <div class="absolute top-0 left-0" style="width: 1440px; height: 900px; overflow: visible"
-        [style.zoom]="zoomLevel">
+      <div
+        class="absolute top-0 left-0"
+        style="width: 1440px; height: 900px; overflow: visible"
+        [style.zoom]="zoomLevel"
+      >
         <!-- Renderizado de componentes de la página seleccionada -->
         <ng-container *ngFor="let comp of getCurrentPage()?.components">
-          <ng-container *ngTemplateOutlet="renderComponent; context: { comp: comp }"></ng-container>
+          <ng-container
+            *ngTemplateOutlet="renderComponent; context: { comp: comp }"
+          ></ng-container>
         </ng-container>
       </div>
 
       <!-- Menú contextual mejorado -->
-      <div *ngIf="contextMenu.visible" [style.left.px]="contextMenu.x" [style.top.px]="contextMenu.y"
-        class="fixed bg-white border border-slate-200 rounded-xl shadow-lg z-[1000] overflow-hidden py-2">
-        <button (click)="addChild(contextMenu.targetId)"
-          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm">
-          <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      <div
+        *ngIf="contextMenu.visible"
+        [style.left.px]="contextMenu.x"
+        [style.top.px]="contextMenu.y"
+        class="fixed bg-white border border-slate-200 rounded-xl shadow-lg z-[1000] overflow-hidden py-2"
+      >
+        <button
+          (click)="addChild(contextMenu.targetId)"
+          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm"
+        >
+          <div
+            class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
             </svg>
           </div>
           <span class="text-slate-700">Agregar hijo</span>
@@ -105,34 +199,73 @@
 
         <div class="h-px bg-slate-100 my-1"></div>
 
-        <button (click)="copyComponent(findComponentById(contextMenu.targetId)!)"
-          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm">
-          <div class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        <button
+          (click)="copyComponent(findComponentById(contextMenu.targetId)!)"
+          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm"
+        >
+          <div
+            class="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
             </svg>
           </div>
           <span class="text-slate-700">Copiar</span>
         </button>
 
-        <button (click)="cutComponent(findComponentById(contextMenu.targetId)!)"
-          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm">
-          <div class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2" />
+        <button
+          (click)="cutComponent(findComponentById(contextMenu.targetId)!)"
+          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm"
+        >
+          <div
+            class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2"
+              />
             </svg>
           </div>
           <span class="text-slate-700">Cortar</span>
         </button>
 
-        <button (click)="pasteComponent(contextMenu.targetId)"
-          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm">
-          <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+        <button
+          (click)="pasteComponent(contextMenu.targetId)"
+          class="flex items-center gap-3 px-4 py-2 hover:bg-slate-50 w-full text-left transition-colors text-sm"
+        >
+          <div
+            class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2"
+              />
             </svg>
           </div>
           <span class="text-slate-700">Pegar dentro</span>
@@ -140,12 +273,25 @@
 
         <div class="h-px bg-slate-100 my-1"></div>
 
-        <button (click)="removeComponent(contextMenu.targetId)"
-          class="flex items-center gap-3 px-4 py-2 hover:bg-red-50 w-full text-left transition-colors text-sm">
-          <div class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center">
-            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        <button
+          (click)="removeComponent(contextMenu.targetId)"
+          class="flex items-center gap-3 px-4 py-2 hover:bg-red-50 w-full text-left transition-colors text-sm"
+        >
+          <div
+            class="w-8 h-8 bg-red-50 rounded-lg flex items-center justify-center"
+          >
+            <svg
+              class="w-4 h-4 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
             </svg>
           </div>
           <span class="text-red-700">Eliminar</span>
@@ -155,36 +301,59 @@
   </div>
 
   <!-- Panel derecho: SidebarDer -->
-  <aside *ngIf="!isPreviewMode" class="w-80 bg-white border-l border-slate-200 shadow-sm">
+  <aside
+    *ngIf="!isPreviewMode"
+    class="w-80 bg-white border-l border-slate-200 shadow-sm"
+  >
     <!-- <app-navegation></app-navegation> -->
-    <app-sidebar-der [selectedComponent]="selectedComponent" [roomCode]="roomCode" [selectedPageId]="selectedPageId"
-      [availablePages]="pages"></app-sidebar-der>
+    <app-propiedades
+      [selectedComponent]="selectedComponent"
+      [roomCode]="roomCode"
+      [selectedPageId]="selectedPageId"
+      [availablePages]="pages"
+    ></app-propiedades>
   </aside>
-
-
 
   <!-- Template de renderizado recursivo mejorado -->
   <ng-template #renderComponent let-comp="comp">
     <ng-container [ngSwitch]="comp.type">
       <!-- SELECT -->
-      <select *ngSwitchCase="'select'" [ngStyle]="comp.style"
+      <select
+        *ngSwitchCase="'select'"
+        [ngStyle]="comp.style"
         class="border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 rounded-md shadow-sm transition-all duration-200"
-        [class.ring-2]="selectedComponent?.id === comp.id" [class.ring-blue-500]="selectedComponent?.id === comp.id"
-        [class.border-blue-500]="selectedComponent?.id === comp.id" (mousedown)="onMouseDown($event, comp)"
-        (click)="selectComponent(comp, $event)" (contextmenu)="onComponentContextMenu($event, comp.id)">
+        [class.ring-2]="selectedComponent?.id === comp.id"
+        [class.ring-blue-500]="selectedComponent?.id === comp.id"
+        [class.border-blue-500]="selectedComponent?.id === comp.id"
+        (mousedown)="onMouseDown($event, comp)"
+        (click)="selectComponent(comp, $event)"
+        (contextmenu)="onComponentContextMenu($event, comp.id)"
+      >
         <option *ngFor="let child of comp.children">{{ child.content }}</option>
       </select>
 
       <!-- Table -->
-      <table *ngSwitchCase="'table'" [ngStyle]="comp.style"
+      <table
+        *ngSwitchCase="'table'"
+        [ngStyle]="comp.style"
         class="border border-slate-300 shadow-sm rounded-md overflow-hidden bg-white transition-all duration-200"
-        [class.ring-2]="selectedComponent?.id === comp.id" [class.ring-blue-500]="selectedComponent?.id === comp.id"
-        [class.border-blue-500]="selectedComponent?.id === comp.id" (click)="selectComponent(comp, $event)"
-        (mousedown)="onMouseDown($event, comp)" (contextmenu)="onComponentContextMenu($event, comp.id)">
-        <tr *ngFor="let row of comp.children" class="hover:bg-slate-50 transition-colors">
-          <td *ngFor="let cell of row.children" [ngStyle]="cell.style"
+        [class.ring-2]="selectedComponent?.id === comp.id"
+        [class.ring-blue-500]="selectedComponent?.id === comp.id"
+        [class.border-blue-500]="selectedComponent?.id === comp.id"
+        (click)="selectComponent(comp, $event)"
+        (mousedown)="onMouseDown($event, comp)"
+        (contextmenu)="onComponentContextMenu($event, comp.id)"
+      >
+        <tr
+          *ngFor="let row of comp.children"
+          class="hover:bg-slate-50 transition-colors"
+        >
+          <td
+            *ngFor="let cell of row.children"
+            [ngStyle]="cell.style"
             class="border border-slate-200 p-3 text-sm hover:bg-blue-50 cursor-pointer transition-colors"
-            (dblclick)="selectComponent(cell, $event)">
+            (dblclick)="selectComponent(cell, $event)"
+          >
             {{ cell.content }}
           </td>
         </tr>
@@ -192,11 +361,28 @@
 
       <!-- Checklist -->
       <ng-container *ngSwitchCase="'checklist'">
-        <div [ngStyle]="comp.style" class="rounded border p-2" [class.ring-2]="selectedComponent?.id === comp.id" [class.ring-blue-500]="selectedComponent?.id === comp.id"
-        [class.border-blue-500]="selectedComponent?.id === comp.id" (click)="selectComponent(comp, $event)"
-        (mousedown)="onMouseDown($event, comp)" (contextmenu)="onComponentContextMenu($event, comp.id)">
-          <label *ngFor="let item of comp.children" class="block">
-            <input type="checkbox" class="mr-2" />
+        <div
+          [ngStyle]="comp.style"
+          class="rounded border p-2"
+          [class.ring-2]="selectedComponent?.id === comp.id"
+          [class.ring-blue-500]="selectedComponent?.id === comp.id"
+          [class.border-blue-500]="selectedComponent?.id === comp.id"
+          (click)="selectComponent(comp, $event)"
+          (mousedown)="onMouseDown($event, comp)"
+          (contextmenu)="onComponentContextMenu($event, comp.id)"
+        >
+          <label
+            *ngFor="let item of comp.children; let i = index"
+            class="block mb-1 cursor-pointer"
+          >
+            <input
+              [type]="comp.style.inputType || item.type || 'checkbox'"
+              [name]="(comp.style.inputType || item.type) === 'radio' ? 'radio_' + comp.id : null"
+              [checked]="item.checked"
+              (change)="updateCheckboxState(item, $event)"
+              class="mr-2"
+              [disabled]="!isPreviewMode"
+            />
             {{ item.content }}
           </label>
         </div>
@@ -204,40 +390,52 @@
 
       <!-- En el ng-template #renderComponent, para el caso de botones -->
       <button *ngSwitchCase="'button'" [ngStyle]="comp.style"
-        class="border border-slate-300 hover:border-slate-400 rounded-md transition-all duration-200 cursor-pointer"
-        [class.border-blue-500]="selectedComponent?.id === comp.id" [class.ring-2]="selectedComponent?.id === comp.id"
-        [class.ring-blue-100]="selectedComponent?.id === comp.id" (mousedown)="onMouseDown($event, comp)"
-        (click)="handleButtonClick($event, comp)" (contextmenu)="onComponentContextMenu($event, comp.id)">
+      class="border border-slate-300 hover:border-slate-400 rounded-md transition-all duration-200 cursor-pointer"
+      [class.border-blue-500]="selectedComponent?.id === comp.id" [class.ring-2]="selectedComponent?.id === comp.id"
+      [class.ring-blue-100]="selectedComponent?.id === comp.id" (mousedown)="onMouseDown($event, comp)"
+      (click)="handleButtonClick($event, comp)" (contextmenu)="onComponentContextMenu($event, comp.id)">
 
-        <!-- Indicador de selección -->
-        <div *ngIf="selectedComponent?.id === comp.id"
-          class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
+      <!-- Indicador de selección -->
+      <div *ngIf="selectedComponent?.id === comp.id"
+        class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
 
-        <span class="select-none">{{ comp.content || 'Botón' }}</span>
-      </button>
+      <span class="select-none">{{ comp.content || 'Botón' }}</span>
+    </button>
       <!-- CUALQUIER OTRO COMPONENTE -->
-      <div *ngSwitchDefault
+      <div
+        *ngSwitchDefault
         class="border border-slate-300 hover:border-slate-400 rounded-md transition-all duration-200 cursor-move group"
-        [ngStyle]="comp.style" [class.border-blue-500]="selectedComponent?.id === comp.id"
-        [class.ring-2]="selectedComponent?.id === comp.id" [class.ring-blue-100]="selectedComponent?.id === comp.id"
-        [class.shadow-sm]="selectedComponent?.id === comp.id" [style.position]="comp.parentId ? 'absolute' : 'absolute'"
-        [style.min-width.px]="50" [style.min-height.px]="40" (mousedown)="onMouseDown($event, comp)"
-        (click)="selectComponent(comp, $event)" (contextmenu)="onComponentContextMenu($event, comp.id)">
+        [ngStyle]="comp.style"
+        [class.border-blue-500]="selectedComponent?.id === comp.id"
+        [class.ring-2]="selectedComponent?.id === comp.id"
+        [class.ring-blue-100]="selectedComponent?.id === comp.id"
+        [class.shadow-sm]="selectedComponent?.id === comp.id"
+        [style.position]="comp.parentId ? 'absolute' : 'absolute'"
+        [style.min-width.px]="50"
+        [style.min-height.px]="40"
+        (mousedown)="onMouseDown($event, comp)"
+        (click)="selectComponent(comp, $event)"
+        (contextmenu)="onComponentContextMenu($event, comp.id)"
+      >
         <!-- Indicador de selección -->
-        <div *ngIf="selectedComponent?.id === comp.id"
-          class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm"></div>
+        <div
+          *ngIf="selectedComponent?.id === comp.id"
+          class="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-sm"
+        ></div>
 
         <!-- Contenido del componente -->
         <div class="relative h-full flex items-center justify-center p-3">
           <span class="text-center select-none text-slate-700">{{
-            comp.content || comp.label || "Componente"
-            }}</span>
+            comp.content || comp.label 
+          }}</span>
         </div>
 
         <!-- Renderizado de hijos -->
         <ng-container *ngIf="comp.children">
           <ng-container *ngFor="let child of comp.children">
-            <ng-container *ngTemplateOutlet="renderComponent; context: { comp: child }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="renderComponent; context: { comp: child }"
+            ></ng-container>
           </ng-container>
         </ng-container>
       </div>

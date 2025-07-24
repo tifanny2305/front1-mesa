@@ -4,7 +4,7 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  AfterViewInit
+  AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { SokectSevice } from '../../../services/socket.service';
@@ -13,8 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { NavegationComponent } from '../../../components/navegation/navegation.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { v4 as uuidv4 } from 'uuid';
-import { SidebarIzqComponent } from '../../../components/sidebar-izq/sidebar-izq.component';
-import { SidebarDerComponent } from '../../../components/sidebar-der/sidebar-der.component';
+import { ComponentesComponent } from '../../../components/componentes/componentes.component';
+import { PropiedadesComponent } from '../../../components/propiedades/propiedades.component';
 
 import { CanvasComponent } from '../../../interface/canvas-component.interface';
 import { DragState } from '../../../interface/dragstate.interface';
@@ -33,16 +33,17 @@ interface Page {
     FormsModule,
     RouterModule,
     DragDropModule,
-   
-    SidebarIzqComponent,
-    SidebarDerComponent,
+
+    ComponentesComponent,
+    PropiedadesComponent,
   ],
   templateUrl: './rooms.component.html',
   styleUrls: ['./rooms.component.css'],
 })
 export class RoomsComponent implements OnInit, AfterViewInit {
-  @ViewChild('canvas', { static: false }) canvasRef!: ElementRef<HTMLDivElement>;
-  @ViewChild(SidebarIzqComponent) sidebarIzq!: SidebarIzqComponent;
+  @ViewChild('canvas', { static: false })
+  canvasRef!: ElementRef<HTMLDivElement>;
+  @ViewChild(ComponentesComponent) componentes!: ComponentesComponent;
 
   roomCode: string = '';
   roomName: string = '';
@@ -51,11 +52,11 @@ export class RoomsComponent implements OnInit, AfterViewInit {
   usersInRoom: any[] = [];
   showParticipants: boolean = false;
   //zoom
-  zoomLevel: number = 0.8;  // Empezamos con el mismo scale que definimos
-  minZoom: number = 0.6;    // No puede hacer menos que esto
-  maxZoom: number = 2;      // Zoom máximo permitido
-  zoomStep: number = 0.05;  // Cuánto aumenta o disminuye el zoom
-selectedPageId: string = '';
+  zoomLevel: number = 0.8; // Empezamos con el mismo scale que definimos
+  minZoom: number = 0.6; // No puede hacer menos que esto
+  maxZoom: number = 2; // Zoom máximo permitido
+  zoomStep: number = 0.05; // Cuánto aumenta o disminuye el zoom
+  selectedPageId: string = '';
 
   dragState: DragState = {
     isDragging: false,
@@ -76,9 +77,8 @@ selectedPageId: string = '';
   clipboardComponent: CanvasComponent | null = null;
   cutMode: boolean = false;
   isModalOpen: boolean = false;
-
+  globalComponents: CanvasComponent[] = [];
   pages: Page[] = [];
- 
 
   selectedComponent: CanvasComponent | null = null;
 
@@ -86,8 +86,8 @@ selectedPageId: string = '';
     private route: ActivatedRoute,
     private SokectSevice: SokectSevice,
     private router: Router,
-    private cdr: ChangeDetectorRef,
-  ) { }
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.roomCode = this.route.snapshot.paramMap.get('code') || '';
@@ -98,10 +98,9 @@ selectedPageId: string = '';
 
     // Crear página 0 desde el principio
 
-
-    this.SokectSevice.onInitialCanvasLoad().subscribe(pages => {
+    this.SokectSevice.onInitialCanvasLoad().subscribe((pages) => {
       this.pages = pages;
-    
+
       if (pages.length === 0) {
         // Si no hay páginas, el usuario es el primero en entrar: crear Página 1
         this.addPage();
@@ -109,78 +108,86 @@ selectedPageId: string = '';
         // Seleccionar la primera página si ya existe
         this.selectedPageId = pages[0].id;
       }
-    
+
       this.cdr.detectChanges();
     });
-    
-    
-    
-
 
     this.SokectSevice.onComponentAdded().subscribe(({ pageId, component }) => {
-      const page = this.pages.find(p => p.id === pageId);
-      if (page) {
-        page.components.push(component);
-        this.cdr.detectChanges();
-      }
-    });
-
-
-    this.SokectSevice.onChildComponentAdded().subscribe(({ parentId, childComponent }) => {
-      const parent = this.findComponentById(parentId);
-      if (parent) {
-        if (!parent.children) parent.children = [];
-        parent.children.push(childComponent);
-        this.cdr.detectChanges();
-      }
-    });
-
-    this.SokectSevice.onComponentRemoved().subscribe(({ pageId, componentId }) => {
-      const page = this.pages.find(p => p.id === pageId);
-      if (page) {
-        this.removeRecursive(page.components, componentId);
-      }
-    
-      if (this.selectedComponent?.id === componentId) {
-        this.selectedComponent = null;
+      if (component.isGlobal) {
+        this.globalComponents.push(component);
+      } else {
+        const page = this.pages.find((p) => p.id === pageId);
+        if (page) {
+          page.components.push(component);
+        }
       }
       this.cdr.detectChanges();
     });
-    
 
-    this.SokectSevice.onComponentMoved().subscribe(({ componentId, newPosition }) => {
-      const component = this.findComponentById(componentId);
-      if (component) {
-        component.style.left = newPosition.left;
-        component.style.top = newPosition.top;
-        this.cdr.detectChanges();
-      }
-    });
-
-    this.SokectSevice.onComponentTransformed().subscribe(({ componentId, newSize }) => {
-      const component = this.findComponentById(componentId);
-      if (component) {
-        component.style.width = newSize.width;
-        component.style.height = newSize.height;
-        this.cdr.detectChanges();
-      }
-    });
-
-    this.SokectSevice.onComponentPropertiesUpdated().subscribe(({ pageId, componentId, updates }) => {
-      const page = this.pages.find(p => p.id === pageId);
-      if (!page) return;
-    
-      const component = this.findComponentByIdInPage(page, componentId);
-      if (component) {
-        if (updates.content !== undefined) {
-          component.content = updates.content;
+    this.SokectSevice.onChildComponentAdded().subscribe(
+      ({ parentId, childComponent }) => {
+        const parent = this.findComponentById(parentId);
+        if (parent) {
+          if (!parent.children) parent.children = [];
+          parent.children.push(childComponent);
+          this.cdr.detectChanges();
         }
-        const { content, ...styleUpdates } = updates;
-        Object.assign(component.style, styleUpdates);
+      }
+    );
+
+    this.SokectSevice.onComponentRemoved().subscribe(
+      ({ pageId, componentId }) => {
+        const page = this.pages.find((p) => p.id === pageId);
+        if (page) {
+          this.removeRecursive(page.components, componentId);
+        }
+
+        if (this.selectedComponent?.id === componentId) {
+          this.selectedComponent = null;
+        }
         this.cdr.detectChanges();
       }
-    });
-    
+    );
+
+    this.SokectSevice.onComponentMoved().subscribe(
+      ({ componentId, newPosition }) => {
+        const component = this.findComponentById(componentId);
+        if (component) {
+          component.style.left = newPosition.left;
+          component.style.top = newPosition.top;
+          this.cdr.detectChanges();
+        }
+      }
+    );
+
+    this.SokectSevice.onComponentTransformed().subscribe(
+      ({ componentId, newSize }) => {
+        const component = this.findComponentById(componentId);
+        if (component) {
+          component.style.width = newSize.width;
+          component.style.height = newSize.height;
+          this.cdr.detectChanges();
+        }
+      }
+    );
+
+    this.SokectSevice.onComponentPropertiesUpdated().subscribe(
+      ({ pageId, componentId, updates }) => {
+        const page = this.pages.find((p) => p.id === pageId);
+        if (!page) return;
+
+        const component = this.findComponentByIdInPage(page, componentId);
+        if (component) {
+          if (updates.content !== undefined) {
+            component.content = updates.content;
+          }
+          const { content, ...styleUpdates } = updates;
+          Object.assign(component.style, styleUpdates);
+          this.cdr.detectChanges();
+        }
+      }
+    );
+
     this.SokectSevice.onPageAdded().subscribe((page) => {
       this.pages.push(page);
       if (!this.selectedPageId) {
@@ -188,27 +195,28 @@ selectedPageId: string = '';
       }
       this.cdr.detectChanges();
     });
-    
+
     this.SokectSevice.onPageRemoved().subscribe((pageId) => {
       console.log('❌ Página eliminada:', pageId);
-      this.pages = this.pages.filter(page => page.id !== pageId);
+      this.pages = this.pages.filter((page) => page.id !== pageId);
       if (this.selectedPageId === pageId && this.pages.length > 0) {
         this.selectPage(this.pages[0].id);
       }
       this.cdr.detectChanges();
     });
     //tabla
-    this.SokectSevice.onTableStructureUpdated().subscribe(({ pageId, tableId, children }) => {
-      const page = this.pages.find(p => p.id === pageId);
-      if (!page) return;
-    
-      const table = this.findComponentByIdInPage(page, tableId);
-      if (table && table.type === 'table') {
-        table.children = children;
-        this.cdr.detectChanges();
+    this.SokectSevice.onTableStructureUpdated().subscribe(
+      ({ pageId, tableId, children }) => {
+        const page = this.pages.find((p) => p.id === pageId);
+        if (!page) return;
+
+        const table = this.findComponentByIdInPage(page, tableId);
+        if (table && table.type === 'table') {
+          table.children = children;
+          this.cdr.detectChanges();
+        }
       }
-    });
-    
+    );
   }
   findComponentByIdInPage(page: Page, id: string): CanvasComponent | null {
     const search = (list: CanvasComponent[]): CanvasComponent | null => {
@@ -223,7 +231,7 @@ selectedPageId: string = '';
     };
     return search(page.components || []);
   }
-  
+
   ngAfterViewInit(): void {
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isPreviewMode) {
@@ -233,39 +241,28 @@ selectedPageId: string = '';
   }
 
   getCurrentPage(): Page | null {
-    const currentPage = this.pages.find(p => p.id === this.selectedPageId) || null;
-    
-    // Actualizamos la página actual en el servicio de socket
-    if (currentPage) {
-      this.SokectSevice.setCurrentPage(currentPage);
-    }
-
-    return currentPage;
+    return this.pages.find((p) => p.id === this.selectedPageId) || null;
   }
 
   selectPage(pageId: string) {
     this.selectedPageId = pageId;
     this.selectedComponent = null;
-  
+
     // Pedimos al servidor la página actualizada
     this.SokectSevice.requestPage(this.roomCode, pageId);
-  
+
     this.SokectSevice.onPageData().subscribe((page) => {
       if (page) {
-        const index = this.pages.findIndex(p => p.id === page.id);
+        const index = this.pages.findIndex((p) => p.id === page.id);
         if (index !== -1) {
           this.pages[index] = page; // Reemplazamos la página en local
-          // Actualizamos la página actual en el servicio de socket
-          this.SokectSevice.setCurrentPage(page);
         }
         this.cdr.detectChanges();
       }
     });
 
     //tabla
-    
   }
-  
 
   addPage() {
     const newPage: Page = {
@@ -303,9 +300,15 @@ selectedPageId: string = '';
 
   onMouseDown(event: MouseEvent, component: CanvasComponent) {
     if (this.isPreviewMode) return;
+    
+    if (component.isGlobal && component.type === 'nav') {
+      this.selectComponent(component, event);
+      return;
+    }
+    
     event.preventDefault();
     event.stopPropagation();
-
+  
     if (event.button === 0) {
       this.dragState = {
         isDragging: true,
@@ -329,31 +332,30 @@ selectedPageId: string = '';
     component.style.left = `${this.dragState.initialLeft + deltaX}px`;
     component.style.top = `${this.dragState.initialTop + deltaY}px`;
 
-    this.SokectSevice.moveComponent(this.roomCode, this.selectedPageId!, component.id, {
-      left: component.style.left,
-      top: component.style.top,
-    });
+    
   }
 
- 
   onMouseUp(event: MouseEvent) {
     if (this.isPreviewMode) return;
-  
+
     if (this.dragState.isDragging && this.dragState.component) {
       // Asegurar que left y top sean strings válidos
       const left = this.dragState.component.style.left ?? '0px';
       const top = this.dragState.component.style.top ?? '0px';
-  
-      this.SokectSevice.moveComponent(this.roomCode, this.selectedPageId!, this.dragState.component.id, {
-        left,
-        top,
-      });
+
+      this.SokectSevice.moveComponent(
+        this.roomCode,
+        this.selectedPageId!,
+        this.dragState.component.id,
+        {
+          left,
+          top,
+        }
+      );
     }
-  
+
     this.dragState.isDragging = false;
   }
-  
-
 
   addChild(parentId: string) {
     const parent = this.findComponentById(parentId);
@@ -378,7 +380,12 @@ selectedPageId: string = '';
       parentId: parent.id,
     };
 
-    this.SokectSevice.addChildComponent(this.roomCode, parentId, child, this.selectedPageId!);
+    this.SokectSevice.addChildComponent(
+      this.roomCode,
+      parentId,
+      child,
+      this.selectedPageId!
+    );
 
     if (!parent.children) parent.children = [];
     parent.children.push(child);
@@ -394,7 +401,6 @@ selectedPageId: string = '';
     }
     this.contextMenu.visible = false;
   }
-  
 
   copyComponent(component: CanvasComponent) {
     this.clipboardComponent = structuredClone(component);
@@ -417,16 +423,20 @@ selectedPageId: string = '';
 
     if (targetParentId) {
       const parent = this.findComponentById(targetParentId);
-      if (parent) {
-        if (!parent.children) parent.children = [];
-        parent.children.push(newComponent);
-      }
-      this.SokectSevice.addChildComponent(this.roomCode, targetParentId, newComponent, this.selectedPageId!);
-
+      
+      this.SokectSevice.addChildComponent(
+        this.roomCode,
+        targetParentId,
+        newComponent,
+        this.selectedPageId!
+      );
     } else {
-      this.getCurrentPage()!.components.push(newComponent);
-      this.SokectSevice.addCanvasComponent(this.roomCode, this.selectedPageId!, newComponent);
-
+     
+      this.SokectSevice.addCanvasComponent(
+        this.roomCode,
+        this.selectedPageId!,
+        newComponent
+      );
     }
 
     if (this.cutMode && this.clipboardComponent?.id) {
@@ -448,12 +458,18 @@ selectedPageId: string = '';
       }
       return null;
     };
-
+  
+    // Buscar en globales primero
+    const globalFound = search(this.globalComponents);
+    if (globalFound) return globalFound;
+  
+    // Luego en página actual
     return search(this.getCurrentPage()?.components || []);
   }
+  
 
   removeRecursive(list: CanvasComponent[], id: string): boolean {
-    const index = list.findIndex(c => c.id === id);
+    const index = list.findIndex((c) => c.id === id);
     if (index !== -1) {
       list.splice(index, 1);
       return true;
@@ -466,27 +482,7 @@ selectedPageId: string = '';
     return false;
   }
 
-  triggerAddComponentFromOutside() {
-    this.sidebarIzq.addComponent();
-  }
 
-  triggerAddLabel() {
-    this.sidebarIzq.addLabelComponent();
-  }
-
-  triggerHtmlModal() {
-    this.sidebarIzq.openHtmlModal();
-  }
-
-  triggerSampleJson() {
-    this.sidebarIzq.loadSampleJson();
-  }
-  AddCombo() {
-    this.sidebarIzq.addSelectComponent();
-  }
-  AddTable() {
-    this.sidebarIzq.addTableComponent();
-  }
   onWheel(event: WheelEvent) {
     if (event.ctrlKey) {
       event.preventDefault(); // Sólo bloqueamos scroll si presiona Ctrl
@@ -517,37 +513,67 @@ selectedPageId: string = '';
     }
   }
 
+  // Agregar estas propiedades en la clase RoomsComponent
+  Math = Math; // Exponer Math al template
 
-// Agregar estas propiedades en la clase RoomsComponent
-Math = Math; // Exponer Math al template
-
-// O alternativamente, crear métodos específicos:
-zoomIn() {
-  this.zoomLevel = Math.min(this.zoomLevel + 0.1, this.maxZoom);
-}
-
-zoomOut() {
-  this.zoomLevel = Math.max(this.zoomLevel - 0.1, this.minZoom);
-}
-handleButtonClick(event: MouseEvent, component: CanvasComponent) {
-  // En modo preview, manejar la redirección
-  if (this.isPreviewMode && component.style.redirectType) {
-    event.stopPropagation();
-    
-    if (component.style.redirectType === 'page') {
-      const targetPageId = component.style.redirectValue;
-      if (targetPageId && this.pages.find(p => p.id === targetPageId)) {
-        this.selectPage(targetPageId);
-      }
-    } else if (component.style.redirectType === 'url') {
-      const url = component.style.redirectValue;
-      if (url) {
-        window.open(url, '_blank');
-      }
-    }
-  } else {
-    // En modo edición, seleccionar el componente
-    this.selectComponent(component, event);
+  // O alternativamente, crear métodos específicos:
+  zoomIn() {
+    this.zoomLevel = Math.min(this.zoomLevel + 0.1, this.maxZoom);
   }
-}
+
+  zoomOut() {
+    this.zoomLevel = Math.max(this.zoomLevel - 0.1, this.minZoom);
+  }
+  handleButtonClick(event: MouseEvent, component: CanvasComponent) {
+    // En modo preview, manejar la redirección
+    if (this.isPreviewMode && component.style.redirectType) {
+      event.stopPropagation();
+
+      if (component.style.redirectType === 'page') {
+        const targetPageId = component.style.redirectValue;
+        if (targetPageId && this.pages.find((p) => p.id === targetPageId)) {
+          this.selectPage(targetPageId);
+        }
+      } else if (component.style.redirectType === 'url') {
+        const url = component.style.redirectValue;
+        if (url) {
+          window.open(url, '_blank');
+        }
+      }
+    } else {
+      // En modo edición, seleccionar el componente
+      this.selectComponent(component, event);
+    }
+  }
+  updateCheckboxState(item: CanvasComponent, event: any) {
+    if (!this.isPreviewMode) return; // Solo funciona en modo preview
+    
+    const isChecked = event.target.checked;
+    
+    if (item.type === 'radio') {
+      // Para radio buttons, desmarcar todos los otros del mismo grupo
+      const parent = this.findComponentById(item.parentId!);
+      if (parent?.children) {
+        parent.children.forEach(child => {
+          child.checked = (child.id === item.id) ? isChecked : false;
+        });
+      }
+    } else {
+      // Para checkboxes, solo cambiar el estado del item actual
+      item.checked = isChecked;
+    }
+    
+    // Opcional: emitir cambios por socket si quieres sincronizar estados
+    this.SokectSevice.updateComponentProperties(
+      this.roomCode,
+      this.selectedPageId!,
+      item.id,
+      { checked: item.checked }
+    );
+  }
+  //nav
+  getAllVisibleComponents(): CanvasComponent[] {
+    const currentPageComponents = this.getCurrentPage()?.components || [];
+    return [...this.globalComponents, ...currentPageComponents];
+  }
 }
