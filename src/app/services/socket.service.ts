@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class SokectSevice {
   private socket: Socket;
+  private currentPageData: any = null;
 
 
   constructor() {
@@ -248,5 +249,14 @@ export class SokectSevice {
     });
   }
   
+  // Método para obtener la página actual
+  getCurrentPage(): any {
+    return this.currentPageData;
+  }
   
+  // Método para establecer la página actual
+  setCurrentPage(page: any): void {
+    this.currentPageData = page;
+  }
+
 }
